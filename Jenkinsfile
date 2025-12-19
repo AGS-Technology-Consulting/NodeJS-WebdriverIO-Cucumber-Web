@@ -105,7 +105,7 @@ pipeline {
             steps {
                 echo '📦 Installing npm dependencies...'
                 sh '''
-                    npm ci --prefer-offline --no-audit
+                    npm install --prefer-offline --no-audit
                     echo "Dependencies installed successfully"
                 '''
             }
