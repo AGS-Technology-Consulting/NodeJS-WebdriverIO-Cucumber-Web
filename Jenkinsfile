@@ -38,8 +38,11 @@ pipeline {
     }
 
     environment {
-        // Add Node.js to PATH - multiple common locations
-        PATH = "/usr/local/bin:/opt/homebrew/bin:/Users/pravingamit/.nvm/versions/node/v22.16.0/bin:${env.PATH}"
+        // Node.js PATH configuration
+        PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
+        npm_config_cache = "${WORKSPACE}/.npm"  // KEY FIX - Use workspace for npm cache
+        NODE_ENV = "${params.ENVIRONMENT}"
+        CI = 'true'
         
         // API Configuration
         API_BASE_URL = 'https://unsobering-maribeth-hokey.ngrok-free.dev'
@@ -47,7 +50,7 @@ pipeline {
         ORG_ID = '374060a8-925c-49aa-8495-8a823949f3e0'
         CREATED_BY = 'c9279b2d-701c-48eb-9122-fbeae465771c'
         
-        // Test Configuration  
+        // Test Configuration
         TEST_ENV = "${params.ENVIRONMENT}"
         BROWSER = "${params.BROWSER}"
         
@@ -105,7 +108,7 @@ pipeline {
             steps {
                 echo '📦 Installing npm dependencies...'
                 sh '''
-                    npm install --prefer-offline --no-audit
+                    npm install
                     echo "Dependencies installed successfully"
                 '''
             }
