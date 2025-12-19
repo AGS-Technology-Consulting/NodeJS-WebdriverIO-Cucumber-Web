@@ -105,6 +105,17 @@ class APIHelper {
         };
     }
 
+    /**
+     * Get Pipeline Run ID (from instance or environment)
+     * This allows worker processes to access the ID
+     */
+    getPipelineRunId() {
+        if (!this.pipelineRunId) {
+            this.pipelineRunId = process.env.PIPELINE_RUN_ID || null;
+        }
+        return this.pipelineRunId;
+    }
+
     clearTestCasesFile() {
         try {
             fs.ensureDirSync(path.dirname(this.testCasesFile));
@@ -213,7 +224,9 @@ class APIHelper {
             if (response.status >= 200 && response.status < 300) {
                 const data = response.data;
                 this.pipelineRunId = data.pipeline_run?.run_id || data.id;
-                global.pipelineRunId = this.pipelineRunId; // Store globally
+                
+                // Store in environment variable for worker processes
+                process.env.PIPELINE_RUN_ID = this.pipelineRunId;
 
                 this.log('');
                 this.log('✅ API-1 SUCCESS: Pipeline Run Created');
@@ -257,8 +270,8 @@ class APIHelper {
             return null;
         }
 
-        // Check both instance and global
-        const pipelineRunId = this.pipelineRunId || global.pipelineRunId;
+        // Get Pipeline Run ID from instance or environment
+        const pipelineRunId = this.getPipelineRunId();
         
         if (!pipelineRunId) {
             this.log('❌ API-3 Skipped: No Pipeline Run ID available');
@@ -298,7 +311,7 @@ class APIHelper {
             const payload = {
                 name: scenarioName,
                 status: apiStatus,
-                run: pipelineRunId, // Use the variable
+                run: pipelineRunId,
                 duration: parseFloat(durationSeconds.toFixed(2)),
                 created_at: this.getCurrentTimestamp(),
                 start_time: this.scenarioStartTime ? this.scenarioStartTime.toISOString() : this.getCurrentTimestamp()
@@ -354,8 +367,8 @@ class APIHelper {
             return null;
         }
 
-        // Check both instance and global
-        const pipelineRunId = this.pipelineRunId || global.pipelineRunId;
+        // Get Pipeline Run ID from instance or environment
+        const pipelineRunId = this.getPipelineRunId();
         
         if (!pipelineRunId) {
             this.log('❌ API-4 Skipped: No Pipeline Run ID available');
