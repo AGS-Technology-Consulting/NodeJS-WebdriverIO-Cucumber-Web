@@ -7,10 +7,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'Node18'  // Use the name you configured
-    }
-
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
@@ -42,13 +38,16 @@ pipeline {
     }
 
     environment {
+        // Add Node.js to PATH - multiple common locations
+        PATH = "/usr/local/bin:/opt/homebrew/bin:/Users/pravingamit/.nvm/versions/node/v22.16.0/bin:${env.PATH}"
+        
         // API Configuration
         API_BASE_URL = 'https://unsobering-maribeth-hokey.ngrok-free.dev'
         API_TOKEN = 'D_YIqZ4D0tYVgFTWKEaRVImEpiq3vzZkOB40lKDDSRk'
         ORG_ID = '374060a8-925c-49aa-8495-8a823949f3e0'
         CREATED_BY = 'c9279b2d-701c-48eb-9122-fbeae465771c'
         
-        // Test Configuration
+        // Test Configuration  
         TEST_ENV = "${params.ENVIRONMENT}"
         BROWSER = "${params.BROWSER}"
         
