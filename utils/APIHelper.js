@@ -68,7 +68,10 @@ class APIHelper {
     // ==================== UTILITY METHODS ====================
 
     getCurrentTimestamp() {
-        return new Date().toISOString();
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000; // offset in milliseconds
+        const localTime = new Date(now - offset);
+        return localTime.toISOString().replace('Z', '+05:30'); // IST timezone
     }
 
     log(message) {
