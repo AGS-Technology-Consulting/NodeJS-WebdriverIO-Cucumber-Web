@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Chrome Browser Service
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: wdio-chrome
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=1
+      - SE_NODE_SESSION_TIMEOUT=300
+    networks:
+      - test-network
+
+  # Firefox Browser Service
+  firefox:
+    image: selenium/standalone-firefox:latest
+    container_name: wdio-firefox
+    ports:
+      - "4445:4444"
+      - "7901:7900"
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=1
+      - SE_NODE_SESSION_TIMEOUT=300
+    networks:
+      - test-network
+
+  # Test Runner Service
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wdio-test-runner
+    depends_on:
+      - chrome
+      - firefox
+    environment:
+      - SELENIUM_REMOTE_URL=http://chrome:4444/wd/hub
+      - API_BASE_URL=${API_BASE_URL}
+      - API_TOKEN=${API_TOKEN}
+      - ORG_ID=${ORG_ID}
+      - CREATED_BY=${CREATED_BY}
+      - BASE_URL=${BASE_URL}
+      - BROWSER=${BROWSER:-chrome}
+    volumes:
+      - ./features:/app/features
+      - ./pages:/app/pages
+      - ./utils:/app/utils
+      - ./test-results:/app/test-results
+      - ./allure-results:/app/allure-results
+      - ./screenshots:/app/screenshots
+    networks:
+      - test-network
+    command: npm test
+
+networks:
+  test-network:
+    driver: bridge
