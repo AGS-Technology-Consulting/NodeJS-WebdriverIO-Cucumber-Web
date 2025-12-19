@@ -38,7 +38,7 @@ pipeline {
     }
 
     environment {
-        // API Configuration - Using direct values
+        // API Configuration
         API_BASE_URL = 'https://unsobering-maribeth-hokey.ngrok-free.dev'
         API_TOKEN = 'D_YIqZ4D0tYVgFTWKEaRVImEpiq3vzZkOB40lKDDSRk'
         ORG_ID = '374060a8-925c-49aa-8495-8a823949f3e0'
@@ -67,10 +67,10 @@ pipeline {
                     echo "═══════════════════════════════════════════════════════"
                     echo "📦 Build Number: ${BUILD_NUMBER}"
                     echo "🔗 Build URL: ${BUILD_URL}"
-                    echo "👤 Triggered By: ${BUILD_USER}"
-                    echo "🌿 Branch: ${GIT_BRANCH}"
-                    echo "🌐 Browser: ${BROWSER}"
-                    echo "🏷️  Environment: ${TEST_ENV}"
+                    echo "👤 Started By: ${currentBuild.getBuildCauses()[0].shortDescription}"
+                    echo "🌿 Branch: ${env.GIT_BRANCH ?: 'main'}"
+                    echo "🌐 Browser: ${params.BROWSER}"
+                    echo "🏷️  Environment: ${params.ENVIRONMENT}"
                     echo "🏷️  Tags: ${params.TAG}"
                     echo "═══════════════════════════════════════════════════════"
                 }
@@ -124,7 +124,7 @@ pipeline {
                 script {
                     echo '🧪 Executing WebdriverIO-Cucumber tests...'
                     
-                    def cucumberOpts = "--tags '${params.TAG}'"
+                    def cucumberOpts = "--cucumberOpts.tagExpression='${params.TAG}'"
                     
                     try {
                         sh """
@@ -132,9 +132,8 @@ pipeline {
                             export BUILD_NUMBER=${BUILD_NUMBER}
                             export BUILD_URL=${BUILD_URL}
                             export JOB_NAME=${JOB_NAME}
-                            export GIT_BRANCH=${GIT_BRANCH}
-                            export GIT_COMMIT=${GIT_COMMIT}
-                            export BUILD_USER=${BUILD_USER}
+                            export GIT_BRANCH=${env.GIT_BRANCH ?: 'main'}
+                            export GIT_COMMIT=${env.GIT_COMMIT ?: ''}
                             
                             npm run test -- ${cucumberOpts}
                         """
@@ -186,7 +185,6 @@ pipeline {
         always {
             echo '🧹 Cleaning up workspace...'
             script {
-                // Cleanup commented out to avoid node context issues
                 echo 'Workspace cleanup skipped to preserve artifacts'
             }
         }
