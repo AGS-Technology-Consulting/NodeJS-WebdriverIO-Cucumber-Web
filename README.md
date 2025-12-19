@@ -347,11 +347,7 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Pravin - Senior QA Automation Engineer**
-- 5+ years experience in Test Automation
-- Expert in WebdriverIO, Selenium, Cypress, Playwright, Appium
-- 1,275+ hours completed on Upwork
-- Worked with HDFC, Shopify, WrapMate
+**AGS - Technology Consulting**
 
 ## 📞 Support
 
