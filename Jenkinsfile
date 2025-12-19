@@ -6,7 +6,7 @@
 
 pipeline {
     agent {
-        label 'nodejs'
+        agent any
     }
 
     options {
