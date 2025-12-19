@@ -213,6 +213,7 @@ class APIHelper {
             if (response.status >= 200 && response.status < 300) {
                 const data = response.data;
                 this.pipelineRunId = data.pipeline_run?.run_id || data.id;
+                global.pipelineRunId = this.pipelineRunId; // Store globally
 
                 this.log('');
                 this.log('✅ API-1 SUCCESS: Pipeline Run Created');
@@ -256,7 +257,10 @@ class APIHelper {
             return null;
         }
 
-        if (!this.pipelineRunId) {
+        // Check both instance and global
+        const pipelineRunId = this.pipelineRunId || global.pipelineRunId;
+        
+        if (!pipelineRunId) {
             this.log('❌ API-3 Skipped: No Pipeline Run ID available');
             return null;
         }
@@ -294,7 +298,7 @@ class APIHelper {
             const payload = {
                 name: scenarioName,
                 status: apiStatus,
-                run: this.pipelineRunId,
+                run: pipelineRunId, // Use the variable
                 duration: parseFloat(durationSeconds.toFixed(2)),
                 created_at: this.getCurrentTimestamp(),
                 start_time: this.scenarioStartTime ? this.scenarioStartTime.toISOString() : this.getCurrentTimestamp()
@@ -350,7 +354,10 @@ class APIHelper {
             return null;
         }
 
-        if (!this.pipelineRunId) {
+        // Check both instance and global
+        const pipelineRunId = this.pipelineRunId || global.pipelineRunId;
+        
+        if (!pipelineRunId) {
             this.log('❌ API-4 Skipped: No Pipeline Run ID available');
             return null;
         }
@@ -394,11 +401,11 @@ class APIHelper {
                 aborted: finalSkipped
             };
 
-            this.log(`📤 API Endpoint: ${this.apiBaseURL}/api/pipeline-runs/${this.pipelineRunId}/`);
+            this.log(`📤 API Endpoint: ${this.apiBaseURL}/api/pipeline-runs/${pipelineRunId}/`);
             this.log(`📦 Payload: ${JSON.stringify(payload, null, 2)}`);
 
             const response = await axios.patch(
-                `${this.apiBaseURL}/api/pipeline-runs/${this.pipelineRunId}/`,
+                `${this.apiBaseURL}/api/pipeline-runs/${pipelineRunId}/`,
                 payload,
                 {
                     headers: this.headers,
