@@ -7,6 +7,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node18'  // Use the name you configured
+    }
+
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
