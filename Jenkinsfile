@@ -134,12 +134,12 @@ pipeline {
                     
                     try {
                         sh """
-                            export JENKINS_URL=${JENKINS_URL}
-                            export BUILD_NUMBER=${BUILD_NUMBER}
-                            export BUILD_URL=${BUILD_URL}
-                            export JOB_NAME=${JOB_NAME}
-                            export GIT_BRANCH=${env.GIT_BRANCH ?: 'main'}
-                            export GIT_COMMIT=${env.GIT_COMMIT ?: ''}
+                            export JENKINS_URL="${JENKINS_URL}"
+                            export BUILD_NUMBER="${BUILD_NUMBER}"
+                            export BUILD_URL="${BUILD_URL}"
+                            export JOB_NAME="${JOB_NAME}"
+                            export GIT_BRANCH="${env.GIT_BRANCH ?: 'main'}"
+                            export GIT_COMMIT="${env.GIT_COMMIT ?: ''}"
                             
                             npm run test -- ${cucumberOpts}
                         """
