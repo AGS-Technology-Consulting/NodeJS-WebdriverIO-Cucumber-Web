@@ -156,7 +156,7 @@ pipeline {
                 echo '📊 Generating test reports...'
                 script {
                     try {
-                        sh 'npm run report || echo "Allure report generation completed"'
+                        sh 'npx allure generate allure-results --clean || echo "Allure report generation completed"'
                     } catch (Exception e) {
                         echo "⚠️  Allure report generation failed: ${e.message}"
                     }
