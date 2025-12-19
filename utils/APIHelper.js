@@ -87,6 +87,16 @@ class APIHelper {
     }
 
     getBrowserInfo() {
+        // Browser object not available in onPrepare hook, use environment variables
+        if (typeof browser === 'undefined' || !browser.capabilities) {
+            return {
+                browserName: process.env.BROWSER || 'chrome',
+                browserVersion: 'latest',
+                platformName: process.platform
+            };
+        }
+        
+        // Browser available (in hooks), use actual capabilities
         const capabilities = browser.capabilities || {};
         return {
             browserName: capabilities.browserName || 'chrome',
